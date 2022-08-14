@@ -1,0 +1,37 @@
+<!-- Plugin Configuration File. Read more: https://plugins.jetbrains.com/docs/intellij/plugin-configuration-file.html -->
+<idea-plugin>
+    <id>com.jaredrobertson.plugins.angularFileSwitcher</id>
+    <name>Angular File Switcher</name>
+    <vendor>Jared Robertson</vendor>
+
+    <depends>com.intellij.modules.platform</depends>
+    <depends>com.intellij.modules.lang</depends>
+
+    <extensions defaultExtensionNs="com.intellij">
+        <applicationConfigurable
+                parentId="tools"
+                instance="com.jaredrobertson.plugins.angularFileSwitcher.settings.AppSettingsConfigurable"
+                id="com.jaredrobertson.plugins.angularFileSwitcher.settings.AppSettingsConfigurable"
+                displayName="Angular File Switcher"/>
+        <applicationService
+                serviceImplementation="com.jaredrobertson.plugins.angularFileSwitcher.settings.AppSettingsState"/>
+    </extensions>
+
+    <actions>
+        <action
+                id="angular.QuickSwitch"
+                class="com.jaredrobertson.plugins.angularFileSwitcher.FileSwitchAction"
+                text="Open Next Similarly Named File"
+                description="Switch between corresponding Angular class, component, and style files"
+        >
+            <keyboard-shortcut first-keystroke="alt O" keymap="$default"/>
+        </action>
+    </actions>
+
+    <projectListeners>
+        <listener
+                class="com.jaredrobertson.plugins.angularFileSwitcher.FileSwitchListener"
+                topic="com.intellij.openapi.fileEditor.FileEditorManagerListener"
+        />
+    </projectListeners>
+</idea-plugin>
