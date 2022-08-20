@@ -2,8 +2,14 @@
 **Angular File Switcher** is a simple plugin that switches between similarly named files within a directory. It is
 specifically designed for Angular component files.
 
-I built it as a reaction to Angular CLI QuickSwitch Plugin. While I find Angular CLI QuickSwitch Plugin valuable, it
-doesn't function _exactly_ how I want in all circumstances.
+I built this as a reaction to Angular CLI QuickSwitch Plugin. While I find it a valuable plugin, it doesn't function _
+exactly_ how I want in all circumstances. Additionally, it has some buggy behaviors I needed to fix:
+
+* This plugin works with multiple tab groups how one would expect.
+* It doesn't unexpectedly rearrange the tab order.
+* You can optionally keep files open - by tab group or workspace
+* If you open a similarly named file using a non-file-switcher command (such as Ctrl+Click), you can optionally close
+  other similarly named files.
 
 Use the `Angular File Switcher` → `Open Next Similarly Named File` action to cycle between component files in a
 directory.
@@ -59,5 +65,7 @@ open a component file:
 #### Always close similarly names files
 
 This is my preferred behavior. Whenever a file is opened, it closes all other files of that component.
+
+Source code: https://github.com/jyjor/angular-file-switcher
 
 <!-- Plugin description end -->
