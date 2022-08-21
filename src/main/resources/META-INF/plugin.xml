@@ -24,7 +24,7 @@
                 text="Open Next Similarly Named File"
                 description="Switch between corresponding Angular class, component, and style files"
         >
-            <keyboard-shortcut first-keystroke="alt O" keymap="$default"/>
+            <keyboard-shortcut first-keystroke="alt S" keymap="$default"/>
         </action>
     </actions>
 
