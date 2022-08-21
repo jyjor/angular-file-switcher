@@ -1,5 +1,10 @@
 # Angular File Switcher Changelog
 
+## 0.0.3
+
+- Update README for clarity
+- Change default shortcut to `Alt S`
+
 ## 0.0.2
 
 - Add unique icon
