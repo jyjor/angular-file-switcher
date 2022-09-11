@@ -12,6 +12,9 @@ import com.intellij.openapi.fileEditor.impl.FileEditorManagerImpl;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.jaredrobertson.plugins.angularFileSwitcher.models.CloseBehavior;
+import com.jaredrobertson.plugins.angularFileSwitcher.models.Grouping;
+import com.jaredrobertson.plugins.angularFileSwitcher.settings.AppSettingsState;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -41,7 +44,7 @@ public class FileSwitchAction extends AnAction {
         final Project project = CommonDataKeys.PROJECT.getData(dataContext);
         if (project == null) return;
 
-        if (Shared.isSwitcherGroupingEverywhere()) {
+        if (AppSettingsState.getInstance().grouping == Grouping.EVERYWHERE) {
             switchFileEverywhere(project, newFile);
         } else {
             switchFileInEditorGroup(dataContext, project, newFile);
@@ -51,7 +54,7 @@ public class FileSwitchAction extends AnAction {
     private void switchFileEverywhere(Project project, VirtualFile newFile) {
         new OpenFileDescriptor(project, newFile).navigate(true);
 
-        if (Shared.shouldCloseOnAction()) {
+        if (AppSettingsState.getInstance().closeBehavior == CloseBehavior.ONLY_ON_ACTION) {
             final FileEditorManager fileEditorManager = FileEditorManager.getInstance(project);
             List<VirtualFile> otherFiles = Shared.getOtherFiles(newFile.getCanonicalPath());
             List<VirtualFile> otherOpenFiles = otherFiles.stream().filter(fileEditorManager::isFileOpen).collect(Collectors.toList());
@@ -65,7 +68,7 @@ public class FileSwitchAction extends AnAction {
 
         ((FileEditorManagerImpl) FileEditorManagerEx.getInstanceEx(project)).openFileImpl2(window, newFile, true);
 
-        if (Shared.shouldCloseOnAction()) {
+        if (AppSettingsState.getInstance().closeBehavior == CloseBehavior.ONLY_ON_ACTION) {
             List<VirtualFile> otherFiles = Shared.getOtherFiles(newFile.getCanonicalPath());
             List<VirtualFile> otherOpenFiles = otherFiles.stream().filter(window::isFileOpen).collect(Collectors.toList());
             otherOpenFiles.forEach(window::closeFile);

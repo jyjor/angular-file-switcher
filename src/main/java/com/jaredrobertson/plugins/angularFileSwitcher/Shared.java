@@ -10,18 +10,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Shared {
-    public static boolean shouldCloseOnAction() {
-        return AppSettingsState.getInstance().closeBehavior == AppSettingsState.CloseBehavior.ONLY_ON_ACTION;
-    }
-
-    public static boolean shouldCloseAlways() {
-        return AppSettingsState.getInstance().closeBehavior == AppSettingsState.CloseBehavior.ALWAYS;
-    }
-
-    public static boolean isSwitcherGroupingEverywhere() {
-        return AppSettingsState.getInstance().switcherGrouping == AppSettingsState.SwitcherGrouping.EVERYWHERE;
-    }
-
     public static @Nullable String getNextPath(String path) {
         final String[] extensions = getAllExtensions();
         final int pathExtensionIndex = getExtensionIndex(path, extensions);

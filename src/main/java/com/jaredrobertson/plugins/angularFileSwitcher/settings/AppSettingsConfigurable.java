@@ -39,7 +39,7 @@ public class AppSettingsConfigurable implements Configurable {
         modified |= !mySettingsComponent.getTemplateFileExtensionsText().equals(settings.templateFileExtensions);
         modified |= !mySettingsComponent.getStyleFileExtensionsText().equals(settings.styleFileExtensions);
         modified |= !mySettingsComponent.getTestFileExtensionsText().equals(settings.testFileExtensions);
-        modified |= mySettingsComponent.getSwitcherGrouping() != settings.switcherGrouping;
+        modified |= mySettingsComponent.getSwitcherGrouping() != settings.grouping;
         modified |= mySettingsComponent.getCloseBehavior() != settings.closeBehavior;
         return modified;
     }
@@ -51,7 +51,7 @@ public class AppSettingsConfigurable implements Configurable {
         settings.templateFileExtensions = mySettingsComponent.getTemplateFileExtensionsText();
         settings.styleFileExtensions = mySettingsComponent.getStyleFileExtensionsText();
         settings.testFileExtensions = mySettingsComponent.getTestFileExtensionsText();
-        settings.switcherGrouping = mySettingsComponent.getSwitcherGrouping();
+        settings.grouping = mySettingsComponent.getSwitcherGrouping();
         settings.closeBehavior = mySettingsComponent.getCloseBehavior();
     }
 
@@ -62,7 +62,7 @@ public class AppSettingsConfigurable implements Configurable {
         mySettingsComponent.setTemplateFileExtensionsText(settings.templateFileExtensions);
         mySettingsComponent.setStyleFileExtensionsText(settings.styleFileExtensions);
         mySettingsComponent.setTestFileExtensionsText(settings.testFileExtensions);
-        mySettingsComponent.setSwitcherGrouping(settings.switcherGrouping);
+        mySettingsComponent.setSwitcherGrouping(settings.grouping);
         mySettingsComponent.setCloseBehavior(settings.closeBehavior);
     }
 

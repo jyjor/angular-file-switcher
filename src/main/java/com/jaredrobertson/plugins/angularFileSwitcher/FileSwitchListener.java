@@ -6,6 +6,9 @@ import com.intellij.openapi.fileEditor.impl.EditorWindow;
 import com.intellij.openapi.fileEditor.impl.PsiAwareFileEditorManagerImpl;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.jaredrobertson.plugins.angularFileSwitcher.models.CloseBehavior;
+import com.jaredrobertson.plugins.angularFileSwitcher.models.Grouping;
+import com.jaredrobertson.plugins.angularFileSwitcher.settings.AppSettingsState;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -16,11 +19,11 @@ public class FileSwitchListener implements FileEditorManagerListener {
     public void fileOpened(@NotNull FileEditorManager source, @NotNull VirtualFile file) {
         FileEditorManagerListener.super.fileOpened(source, file);
 
-        if (!Shared.shouldCloseAlways()) return;
+        if (AppSettingsState.getInstance().closeBehavior != CloseBehavior.ALWAYS) return;
 
         List<VirtualFile> otherFiles = Shared.getOtherFiles(file.getCanonicalPath());
 
-        if (Shared.isSwitcherGroupingEverywhere()) {
+        if (AppSettingsState.getInstance().grouping == Grouping.EVERYWHERE) {
             closeFilesEverywhere(source, otherFiles);
         } else {
             closeFilesInEditorGroup(source, otherFiles);

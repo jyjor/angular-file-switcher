@@ -6,6 +6,8 @@ import com.intellij.openapi.ui.ComboBox;
 import com.intellij.ui.IdeBorderFactory;
 import com.intellij.ui.components.JBTextField;
 import com.intellij.util.ui.FormBuilder;
+import com.jaredrobertson.plugins.angularFileSwitcher.models.CloseBehavior;
+import com.jaredrobertson.plugins.angularFileSwitcher.models.Grouping;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -21,8 +23,8 @@ public class AppSettingsComponent {
     private final JBTextField myStyleFileExtensionsText = new JBTextField();
     private final JBTextField myTestFileExtensionsText = new JBTextField();
 
-    private final ComboBox<AppSettingsState.SwitcherGrouping> mySwitcherGroupingCombo = new ComboBox<>(AppSettingsState.SwitcherGrouping.values(), 240);
-    private final ComboBox<AppSettingsState.CloseBehavior> myCloseBehaviorCombo = new ComboBox<>(AppSettingsState.CloseBehavior.values(), 240);
+    private final ComboBox<Grouping> mySwitcherGroupingCombo = new ComboBox<>(Grouping.values(), 240);
+    private final ComboBox<CloseBehavior> myCloseBehaviorCombo = new ComboBox<>(CloseBehavior.values(), 240);
 
     public AppSettingsComponent() {
         JPanel fileExtensionTypePanel = FormBuilder.createFormBuilder()
@@ -91,20 +93,20 @@ public class AppSettingsComponent {
     }
 
     @NotNull
-    public AppSettingsState.SwitcherGrouping getSwitcherGrouping() {
+    public Grouping getSwitcherGrouping() {
         return mySwitcherGroupingCombo.getItem();
     }
 
-    public void setSwitcherGrouping(@NotNull AppSettingsState.SwitcherGrouping newSwitcherGrouping) {
-        mySwitcherGroupingCombo.setItem(newSwitcherGrouping);
+    public void setSwitcherGrouping(@NotNull Grouping newGrouping) {
+        mySwitcherGroupingCombo.setItem(newGrouping);
     }
 
     @NotNull
-    public AppSettingsState.CloseBehavior getCloseBehavior() {
+    public CloseBehavior getCloseBehavior() {
         return myCloseBehaviorCombo.getItem();
     }
 
-    public void setCloseBehavior(@NotNull AppSettingsState.CloseBehavior newCloseBehavior) {
+    public void setCloseBehavior(@NotNull CloseBehavior newCloseBehavior) {
         myCloseBehaviorCombo.setItem(newCloseBehavior);
     }
 }
