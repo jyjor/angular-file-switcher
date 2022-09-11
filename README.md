@@ -6,6 +6,7 @@ except for the file extensions) match.
 I built this as a reaction to Angular CLI QuickSwitch Plugin. While I find it a valuable plugin, it doesn't function
 _exactly_ how I want in all circumstances. It has the following enhancements:
 
+* Choose file extensions to include or exclude.
 * This plugin works with multiple tab groups how one would expect.
 * It doesn't unexpectedly rearrange the tab order.
 * Optionally keep files open - by tab group or workspace.
