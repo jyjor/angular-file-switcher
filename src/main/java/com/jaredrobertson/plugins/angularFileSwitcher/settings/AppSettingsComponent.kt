@@ -1,112 +1,82 @@
 // Copyright 2000-2022 JetBrains s.r.o. and other contributors. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+package com.jaredrobertson.plugins.angularFileSwitcher.settings
 
-package com.jaredrobertson.plugins.angularFileSwitcher.settings;
-
-import com.intellij.openapi.ui.ComboBox;
-import com.intellij.ui.IdeBorderFactory;
-import com.intellij.ui.components.JBTextField;
-import com.intellij.util.ui.FormBuilder;
-import com.jaredrobertson.plugins.angularFileSwitcher.models.CloseBehavior;
-import com.jaredrobertson.plugins.angularFileSwitcher.models.Grouping;
-import org.jetbrains.annotations.NotNull;
-
-import javax.swing.*;
+import com.intellij.openapi.ui.ComboBox
+import com.intellij.ui.IdeBorderFactory
+import com.intellij.ui.components.JBTextField
+import com.intellij.util.ui.FormBuilder
+import com.jaredrobertson.plugins.angularFileSwitcher.models.CloseBehavior
+import com.jaredrobertson.plugins.angularFileSwitcher.models.Grouping
+import javax.swing.JComponent
+import javax.swing.JPanel
 
 /**
- * Supports creating and managing a {@link JPanel} for the Settings Dialog.
+ * Supports creating and managing a [JPanel] for the Settings Dialog.
  */
-public class AppSettingsComponent {
+class AppSettingsComponent {
+    val panel: JPanel
+    private val myClassFileExtensionsText = JBTextField()
+    private val myTemplateFileExtensionsText = JBTextField()
+    private val myStyleFileExtensionsText = JBTextField()
+    private val myTestFileExtensionsText = JBTextField()
+    private val mySwitcherGroupingCombo = ComboBox(Grouping.values(), 240)
+    private val myCloseBehaviorCombo = ComboBox(CloseBehavior.values(), 240)
 
-    private final JPanel myMainPanel;
-    private final JBTextField myClassFileExtensionsText = new JBTextField();
-    private final JBTextField myTemplateFileExtensionsText = new JBTextField();
-    private final JBTextField myStyleFileExtensionsText = new JBTextField();
-    private final JBTextField myTestFileExtensionsText = new JBTextField();
-
-    private final ComboBox<Grouping> mySwitcherGroupingCombo = new ComboBox<>(Grouping.values(), 240);
-    private final ComboBox<CloseBehavior> myCloseBehaviorCombo = new ComboBox<>(CloseBehavior.values(), 240);
-
-    public AppSettingsComponent() {
-        JPanel fileExtensionTypePanel = FormBuilder.createFormBuilder()
-                .addLabeledComponent("Class: ", myClassFileExtensionsText, 5, false)
-                .addLabeledComponent("Template: ", myTemplateFileExtensionsText, 5, false)
-                .addLabeledComponent("Style: ", myStyleFileExtensionsText, 5, false)
-                .addLabeledComponent("Test: ", myTestFileExtensionsText, 5, false)
-                .getPanel();
-        fileExtensionTypePanel.setBorder(IdeBorderFactory.createTitledBorder("File Extension Types"));
-
-        JPanel otherSettingsPanel = FormBuilder.createFormBuilder()
-                .addLabeledComponent("Open and close same component files: ", mySwitcherGroupingCombo, 5, false)
-                .addLabeledComponent("Close other component files: ", myCloseBehaviorCombo, 5, false)
-                .getPanel();
-        otherSettingsPanel.setBorder(IdeBorderFactory.createTitledBorder("Other Settings"));
-
-        myMainPanel = FormBuilder.createFormBuilder()
-                .addComponent(fileExtensionTypePanel)
-                .addComponent(otherSettingsPanel)
-                .addComponentFillVertically(new JPanel(), 0)
-                .getPanel();
+    init {
+        val fileExtensionTypePanel = FormBuilder.createFormBuilder()
+            .addLabeledComponent("Class: ", myClassFileExtensionsText, 5, false)
+            .addLabeledComponent("Template: ", myTemplateFileExtensionsText, 5, false)
+            .addLabeledComponent("Style: ", myStyleFileExtensionsText, 5, false)
+            .addLabeledComponent("Test: ", myTestFileExtensionsText, 5, false)
+            .panel
+        fileExtensionTypePanel.border = IdeBorderFactory.createTitledBorder("File Extension Types")
+        val otherSettingsPanel = FormBuilder.createFormBuilder()
+            .addLabeledComponent(
+                "Open and close same component files: ",
+                mySwitcherGroupingCombo,
+                5,
+                false
+            )
+            .addLabeledComponent("Close other component files: ", myCloseBehaviorCombo, 5, false)
+            .panel
+        otherSettingsPanel.border = IdeBorderFactory.createTitledBorder("Other Settings")
+        panel = FormBuilder.createFormBuilder()
+            .addComponent(fileExtensionTypePanel)
+            .addComponent(otherSettingsPanel)
+            .addComponentFillVertically(JPanel(), 0)
+            .panel
     }
 
-    public JPanel getPanel() {
-        return myMainPanel;
-    }
-
-    public JComponent getPreferredFocusedComponent() {
-        return myClassFileExtensionsText;
-    }
-
-    @NotNull
-    public String getClassFileExtensionsText() {
-        return myClassFileExtensionsText.getText();
-    }
-
-    public void setClassFileExtensionsText(@NotNull String newText) {
-        myClassFileExtensionsText.setText(newText);
-    }
-
-    @NotNull
-    public String getTemplateFileExtensionsText() {
-        return myTemplateFileExtensionsText.getText();
-    }
-
-    public void setTemplateFileExtensionsText(@NotNull String newText) {
-        myTemplateFileExtensionsText.setText(newText);
-    }
-
-    @NotNull
-    public String getStyleFileExtensionsText() {
-        return myStyleFileExtensionsText.getText();
-    }
-
-    public void setStyleFileExtensionsText(@NotNull String newText) {
-        myStyleFileExtensionsText.setText(newText);
-    }
-
-    @NotNull
-    public String getTestFileExtensionsText() {
-        return myTestFileExtensionsText.getText();
-    }
-
-    public void setTestFileExtensionsText(@NotNull String newText) {
-        myTestFileExtensionsText.setText(newText);
-    }
-
-    @NotNull
-    public Grouping getSwitcherGrouping() {
-        return mySwitcherGroupingCombo.getItem();
-    }
-
-    public void setSwitcherGrouping(@NotNull Grouping newGrouping) {
-        mySwitcherGroupingCombo.setItem(newGrouping);
-    }
-
-    @NotNull
-    public CloseBehavior getCloseBehavior() {
-        return myCloseBehaviorCombo.getItem();
-    }
-
-    public void setCloseBehavior(@NotNull CloseBehavior newCloseBehavior) {
-        myCloseBehaviorCombo.setItem(newCloseBehavior);
-    }
+    val preferredFocusedComponent: JComponent
+        get() = myClassFileExtensionsText
+    var classFileExtensionsText: String
+        get() = myClassFileExtensionsText.text
+        set(newText) {
+            myClassFileExtensionsText.text = newText
+        }
+    var templateFileExtensionsText: String
+        get() = myTemplateFileExtensionsText.text
+        set(newText) {
+            myTemplateFileExtensionsText.text = newText
+        }
+    var styleFileExtensionsText: String
+        get() = myStyleFileExtensionsText.text
+        set(newText) {
+            myStyleFileExtensionsText.text = newText
+        }
+    var testFileExtensionsText: String
+        get() = myTestFileExtensionsText.text
+        set(newText) {
+            myTestFileExtensionsText.text = newText
+        }
+    var switcherGrouping: Grouping
+        get() = mySwitcherGroupingCombo.item
+        set(newGrouping) {
+            mySwitcherGroupingCombo.item = newGrouping
+        }
+    var closeBehavior: CloseBehavior
+        get() = myCloseBehaviorCombo.item
+        set(newCloseBehavior) {
+            myCloseBehaviorCombo.item = newCloseBehavior
+        }
 }

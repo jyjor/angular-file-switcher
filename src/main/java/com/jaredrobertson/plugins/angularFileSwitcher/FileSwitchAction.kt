@@ -1,77 +1,83 @@
-package com.jaredrobertson.plugins.angularFileSwitcher;
+package com.jaredrobertson.plugins.angularFileSwitcher
 
-import com.intellij.openapi.actionSystem.AnAction;
-import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.actionSystem.CommonDataKeys;
-import com.intellij.openapi.actionSystem.DataContext;
-import com.intellij.openapi.fileEditor.FileEditorManager;
-import com.intellij.openapi.fileEditor.OpenFileDescriptor;
-import com.intellij.openapi.fileEditor.ex.FileEditorManagerEx;
-import com.intellij.openapi.fileEditor.impl.EditorWindow;
-import com.intellij.openapi.fileEditor.impl.FileEditorManagerImpl;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.vfs.LocalFileSystem;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.jaredrobertson.plugins.angularFileSwitcher.models.CloseBehavior;
-import com.jaredrobertson.plugins.angularFileSwitcher.models.Grouping;
-import com.jaredrobertson.plugins.angularFileSwitcher.settings.AppSettingsState;
+import com.intellij.openapi.actionSystem.AnAction
+import com.intellij.openapi.actionSystem.AnActionEvent
+import com.intellij.openapi.actionSystem.CommonDataKeys
+import com.intellij.openapi.actionSystem.DataContext
+import com.intellij.openapi.fileEditor.FileEditorManager
+import com.intellij.openapi.fileEditor.OpenFileDescriptor
+import com.intellij.openapi.fileEditor.ex.FileEditorManagerEx
+import com.intellij.openapi.fileEditor.impl.EditorWindow
+import com.intellij.openapi.fileEditor.impl.FileEditorManagerImpl
+import com.intellij.openapi.project.Project
+import com.intellij.openapi.vfs.LocalFileSystem
+import com.intellij.openapi.vfs.VirtualFile
+import com.jaredrobertson.plugins.angularFileSwitcher.models.CloseBehavior
+import com.jaredrobertson.plugins.angularFileSwitcher.models.Grouping
+import com.jaredrobertson.plugins.angularFileSwitcher.settings.AppSettingsState.Companion.instance
+import java.util.function.Consumer
+import java.util.stream.Collectors
 
-import java.util.List;
-import java.util.stream.Collectors;
-
-public class FileSwitchAction extends AnAction {
-    public FileSwitchAction() {
-        super("Open Next Similarly Named File");
-    }
-
-    @Override
-    public void actionPerformed(AnActionEvent event) {
-        final DataContext dataContext = event.getDataContext();
-        final VirtualFile currentFile = CommonDataKeys.VIRTUAL_FILE.getData(dataContext);
-        if (currentFile == null) return;
-
-        final String currentPath = currentFile.getCanonicalPath();
-        if (currentPath == null) return;
-
-        final String newPath = Shared.getNextPath(currentPath);
-        if (newPath == null) return;
-
-        if (currentPath.equals(newPath)) return;
-
-        final VirtualFile newFile = LocalFileSystem.getInstance().findFileByPath(newPath);
-        if (newFile == null || !newFile.exists()) return;
-
-        final Project project = CommonDataKeys.PROJECT.getData(dataContext);
-        if (project == null) return;
-
-        if (AppSettingsState.getInstance().grouping == Grouping.EVERYWHERE) {
-            switchFileEverywhere(project, newFile);
+class FileSwitchAction : AnAction("Open Next Similarly Named File") {
+    override fun actionPerformed(event: AnActionEvent) {
+        val dataContext = event.dataContext
+        val currentFile = CommonDataKeys.VIRTUAL_FILE.getData(dataContext) ?: return
+        val currentPath = currentFile.canonicalPath ?: return
+        val newPath = Shared.getNextPath(currentPath)
+            ?: return
+        if (currentPath == newPath) return
+        val newFile = LocalFileSystem.getInstance().findFileByPath(newPath)
+        if (newFile == null || !newFile.exists()) return
+        val project = CommonDataKeys.PROJECT.getData(dataContext) ?: return
+        if (instance.grouping === Grouping.EVERYWHERE) {
+            switchFileEverywhere(project, newFile)
         } else {
-            switchFileInEditorGroup(dataContext, project, newFile);
+            switchFileInEditorGroup(dataContext, project, newFile)
         }
     }
 
-    private void switchFileEverywhere(Project project, VirtualFile newFile) {
-        new OpenFileDescriptor(project, newFile).navigate(true);
-
-        if (AppSettingsState.getInstance().closeBehavior == CloseBehavior.ONLY_ON_ACTION) {
-            final FileEditorManager fileEditorManager = FileEditorManager.getInstance(project);
-            List<VirtualFile> otherFiles = Shared.getOtherFiles(newFile.getCanonicalPath());
-            List<VirtualFile> otherOpenFiles = otherFiles.stream().filter(fileEditorManager::isFileOpen).collect(Collectors.toList());
-            otherOpenFiles.forEach(fileEditorManager::closeFile);
+    private fun switchFileEverywhere(project: Project, newFile: VirtualFile) {
+        OpenFileDescriptor(project, newFile).navigate(true)
+        if (instance.closeBehavior === CloseBehavior.ONLY_ON_ACTION) {
+            val fileEditorManager = FileEditorManager.getInstance(project)
+            val path = newFile.canonicalPath ?: return
+            val otherFiles = Shared.getOtherFiles(path)
+            val otherOpenFiles = otherFiles.stream()
+                .filter { file: VirtualFile? -> fileEditorManager.isFileOpen(file!!) }
+                .collect(Collectors.toList())
+            otherOpenFiles.forEach(Consumer { file: VirtualFile? ->
+                fileEditorManager.closeFile(
+                    file!!
+                )
+            })
         }
     }
 
-    private void switchFileInEditorGroup(DataContext dataContext, Project project, VirtualFile newFile) {
-        final EditorWindow window = EditorWindow.DATA_KEY.getData(dataContext);
-        if (window == null) return;
-
-        ((FileEditorManagerImpl) FileEditorManagerEx.getInstanceEx(project)).openFileImpl2(window, newFile, true);
-
-        if (AppSettingsState.getInstance().closeBehavior == CloseBehavior.ONLY_ON_ACTION) {
-            List<VirtualFile> otherFiles = Shared.getOtherFiles(newFile.getCanonicalPath());
-            List<VirtualFile> otherOpenFiles = otherFiles.stream().filter(window::isFileOpen).collect(Collectors.toList());
-            otherOpenFiles.forEach(window::closeFile);
+    private fun switchFileInEditorGroup(
+        dataContext: DataContext,
+        project: Project,
+        newFile: VirtualFile
+    ) {
+        val window = EditorWindow.DATA_KEY.getData(dataContext)
+            ?: return
+        (FileEditorManagerEx.getInstanceEx(project) as FileEditorManagerImpl).openFileImpl2(
+            window,
+            newFile,
+            true
+        )
+        if (instance.closeBehavior === CloseBehavior.ONLY_ON_ACTION) {
+            val path = newFile.canonicalPath ?: return
+            val otherFiles = Shared.getOtherFiles(path)
+            val otherOpenFiles = otherFiles.stream().filter { file: VirtualFile? ->
+                window.isFileOpen(
+                    file!!
+                )
+            }.collect(Collectors.toList())
+            otherOpenFiles.forEach(Consumer { file: VirtualFile? ->
+                window.closeFile(
+                    file!!
+                )
+            })
         }
     }
 }

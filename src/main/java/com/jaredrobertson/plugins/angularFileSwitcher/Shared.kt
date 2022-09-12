@@ -1,93 +1,87 @@
-package com.jaredrobertson.plugins.angularFileSwitcher;
+package com.jaredrobertson.plugins.angularFileSwitcher
 
-import com.intellij.openapi.vfs.LocalFileSystem;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.jaredrobertson.plugins.angularFileSwitcher.settings.AppSettingsState;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import com.intellij.openapi.vfs.LocalFileSystem
+import com.intellij.openapi.vfs.VirtualFile
+import com.jaredrobertson.plugins.angularFileSwitcher.settings.AppSettingsState.Companion.instance
 
-import java.util.ArrayList;
-import java.util.List;
-
-public class Shared {
-    public static @Nullable String getNextPath(String path) {
-        final String[] extensions = getAllExtensions();
-        final int pathExtensionIndex = getExtensionIndex(path, extensions);
-        if (pathExtensionIndex == -1) return null;
-
-        final String basePath = getBasePath(path, pathExtensionIndex, extensions);
-
-        for (int i = 1; i < extensions.length; i++) {
-            final int index = (pathExtensionIndex + i) % extensions.length;
-            final String newExtension = extensions[index];
-            final String testPath = basePath + newExtension;
-            final VirtualFile testFile = LocalFileSystem.getInstance().findFileByPath(testPath);
+object Shared {
+    fun getNextPath(path: String): String? {
+        val extensions = allExtensions
+        val pathExtensionIndex = getExtensionIndex(path, extensions)
+        if (pathExtensionIndex == -1) return null
+        val basePath = getBasePath(path, pathExtensionIndex, extensions)
+        for (i in 1 until extensions.size) {
+            val index = (pathExtensionIndex + i) % extensions.size
+            val newExtension = extensions[index]
+            val testPath = basePath + newExtension
+            val testFile = LocalFileSystem.getInstance().findFileByPath(testPath)
             if (testFile != null && testFile.exists()) {
-                return testPath;
+                return testPath
             }
         }
-        return null;
+        return null
     }
 
-    public static @NotNull List<VirtualFile> getOtherFiles(String path) {
-        final String[] extensions = getAllExtensions();
-        final List<VirtualFile> files = new ArrayList<>(extensions.length - 1);
-        final int pathExtensionIndex = getExtensionIndex(path, extensions);
+    fun getOtherFiles(path: String): List<VirtualFile> {
+        val extensions = allExtensions
+        val files: MutableList<VirtualFile> = ArrayList(extensions.size - 1)
+        val pathExtensionIndex = getExtensionIndex(path, extensions)
         if (pathExtensionIndex == -1) {
-            return files;
+            return files
         }
-
-        final String basePath = getBasePath(path, pathExtensionIndex, extensions);
-
-        for (int i = 0; i < extensions.length; i++) {
-            if (i == pathExtensionIndex) continue;
-            VirtualFile file = getValidFile(basePath, i, extensions);
+        val basePath = getBasePath(path, pathExtensionIndex, extensions)
+        for (i in extensions.indices) {
+            if (i == pathExtensionIndex) continue
+            val file = getValidFile(basePath, i, extensions)
             if (file != null) {
-                files.add(file);
+                files.add(file)
             }
         }
-
-        return files;
+        return files
     }
 
-    private static String[] getAllExtensions() {
-        final AppSettingsState settings = AppSettingsState.getInstance();
-        return (settings.classFileExtensions.trim() + " " +
-                settings.templateFileExtensions.trim() + " " +
-                settings.styleFileExtensions.trim() + " " +
-                settings.testFileExtensions.trim()).split(" +");
+    private val allExtensions: Array<String>
+        get() {
+            val settings = instance
+            return (settings.classFileExtensions.trim { it <= ' ' } + " " +
+                    settings.templateFileExtensions.trim { it <= ' ' } + " " +
+                    settings.styleFileExtensions.trim { it <= ' ' } + " " +
+                    settings.testFileExtensions.trim { it <= ' ' }).split(" +".toRegex())
+                .dropLastWhile { it.isEmpty() }
+                .toTypedArray()
+        }
+
+    private fun getValidFile(
+        basePath: String?,
+        extensionIndex: Int,
+        extensions: Array<String>
+    ): VirtualFile? {
+        val extension = extensions[extensionIndex]
+        val path = basePath + extension
+        val file = LocalFileSystem.getInstance().findFileByPath(path)
+        return if (file == null || !file.exists()) null else file
     }
 
-    private static @Nullable VirtualFile getValidFile(String basePath, int extensionIndex, String[] extensions) {
-        final String extension = extensions[extensionIndex];
-        final String path = basePath + extension;
-        final VirtualFile file = LocalFileSystem.getInstance().findFileByPath(path);
-        if (file == null || !file.exists()) return null;
-        return file;
-    }
-
-    private static int getExtensionIndex(String path, String[] extensions) {
-        String extension = "";
-        int index = -1;
-        for (int i = 0; i < extensions.length; i++) {
+    private fun getExtensionIndex(path: String, extensions: Array<String>): Int {
+        var extension = ""
+        var index = -1
+        for (i in extensions.indices) {
             if (path.endsWith(extensions[i])) {
-                if (extensions[i].length() > extension.length()) {
+                if (extensions[i].length > extension.length) {
                     // The path might match both ".ts" and ".spec.ts"
                     // Pick the longer extension because it's a more accurate match
-                    extension = extensions[i];
-                    index = i;
+                    extension = extensions[i]
+                    index = i
                 }
             }
         }
-
-        return index;
+        return index
     }
 
-    private static @Nullable String getBasePath(String path, int extensionIndex, String[] extensions) {
-        if (extensionIndex == -1) return null;
-
-        final int extensionLength = extensions[extensionIndex].length();
-        final int baseLength = path.length() - extensionLength;
-        return path.substring(0, baseLength);
+    private fun getBasePath(path: String, extensionIndex: Int, extensions: Array<String>): String? {
+        if (extensionIndex == -1) return null
+        val extensionLength = extensions[extensionIndex].length
+        val baseLength = path.length - extensionLength
+        return path.substring(0, baseLength)
     }
 }
