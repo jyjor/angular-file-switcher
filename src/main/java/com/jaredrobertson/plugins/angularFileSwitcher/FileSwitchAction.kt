@@ -60,10 +60,10 @@ class FileSwitchAction : AnAction("Open Next Similarly Named File") {
     ) {
         val window = EditorWindow.DATA_KEY.getData(dataContext)
             ?: return
-        (FileEditorManagerEx.getInstanceEx(project) as FileEditorManagerImpl).openFileImpl2(
-            window,
+        (FileEditorManagerEx.getInstanceEx(project) as FileEditorManagerImpl).openFileWithProviders(
             newFile,
-            true
+            true,
+            window,
         )
         if (instance.closeBehavior === CloseBehavior.ONLY_ON_ACTION) {
             val path = newFile.canonicalPath ?: return
