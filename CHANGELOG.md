@@ -1,5 +1,9 @@
 # Angular File Switcher Changelog
 
+## 0.0.7
+
+- Update to the latest IntelliJ Platform version (233)
+
 ## 0.0.6
 
 - Update to the latest IntelliJ Platform version (232)
