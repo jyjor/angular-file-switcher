@@ -8,7 +8,6 @@ import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.fileEditor.OpenFileDescriptor
 import com.intellij.openapi.fileEditor.ex.FileEditorManagerEx
 import com.intellij.openapi.fileEditor.impl.EditorWindow
-import com.intellij.openapi.fileEditor.impl.FileEditorManagerImpl
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VirtualFile
@@ -60,11 +59,7 @@ class FileSwitchAction : AnAction("Open Next Similarly Named File") {
     ) {
         val window = EditorWindow.DATA_KEY.getData(dataContext)
             ?: return
-        (FileEditorManagerEx.getInstanceEx(project) as FileEditorManagerImpl).openFileWithProviders(
-            newFile,
-            true,
-            window,
-        )
+        FileEditorManagerEx.getInstanceEx(project).openFileWithProviders(newFile, true, window)
         if (instance.closeBehavior === CloseBehavior.ONLY_ON_ACTION) {
             val path = newFile.canonicalPath ?: return
             val otherFiles = Shared.getOtherFiles(path)
