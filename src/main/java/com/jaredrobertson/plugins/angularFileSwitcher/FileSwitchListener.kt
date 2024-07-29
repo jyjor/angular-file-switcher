@@ -3,7 +3,6 @@ package com.jaredrobertson.plugins.angularFileSwitcher
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.fileEditor.FileEditorManagerListener
 import com.intellij.openapi.fileEditor.impl.PsiAwareFileEditorManagerImpl
-import com.intellij.openapi.util.Pair
 import com.intellij.openapi.vfs.VirtualFile
 import com.jaredrobertson.plugins.angularFileSwitcher.models.CloseBehavior
 import com.jaredrobertson.plugins.angularFileSwitcher.models.Grouping
@@ -37,14 +36,11 @@ class FileSwitchListener : FileEditorManagerListener {
         })
     }
 
-    private fun closeFilesInEditorGroup(source: FileEditorManager, otherFiles: List<VirtualFile>) {
+    private fun closeFilesInEditorGroup(source: FileEditorManager, matchingFiles: List<VirtualFile>) {
         val window = (source as PsiAwareFileEditorManagerImpl).splitters.currentWindow ?: return
 
-        // Close all the files
-        // This closeFile overload also removes the files from the selection history.
-        // - This way "Reopen closed tab" works doesn't get stuck in a loop reopening the last two tabs
-        // - In other words, the file group acts more like a single unit, rather than individual files
-        val otherOpenFiles = otherFiles.stream().filter { file: VirtualFile? ->
+        // Close all the matching files in the splitter window
+        val otherOpenFiles = matchingFiles.stream().filter { file: VirtualFile? ->
             window.isFileOpen(
                 file!!
             )
@@ -52,12 +48,6 @@ class FileSwitchListener : FileEditorManagerListener {
         otherOpenFiles.forEach(Consumer { file: VirtualFile? ->
             window.closeFile(
                 file!!
-            )
-        })
-        //        otherOpenFiles.forEach(file -> window.getManager().closeFile(file, window, true));
-        otherOpenFiles.forEach(Consumer { file: VirtualFile ->
-            window.manager.selectionHistory.remove(
-                Pair.create(file, window)
             )
         })
     }
