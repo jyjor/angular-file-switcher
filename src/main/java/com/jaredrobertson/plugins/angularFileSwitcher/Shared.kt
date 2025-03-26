@@ -40,7 +40,7 @@ object Shared {
         return files
     }
 
-    private val allExtensions: Array<String>
+    val allExtensions: Array<String>
         get() {
             val settings = instance
             return (settings.classFileExtensions.trim { it <= ' ' } + " " +
@@ -62,7 +62,7 @@ object Shared {
         return if (file == null || !file.exists()) null else file
     }
 
-    private fun getExtensionIndex(path: String, extensions: Array<String>): Int {
+    fun getExtensionIndex(path: String, extensions: Array<String>): Int {
         var extension = ""
         var index = -1
         for (i in extensions.indices) {
@@ -78,7 +78,7 @@ object Shared {
         return index
     }
 
-    private fun getBasePath(path: String, extensionIndex: Int, extensions: Array<String>): String? {
+    fun getBasePath(path: String, extensionIndex: Int, extensions: Array<String>): String? {
         if (extensionIndex == -1) return null
         val extensionLength = extensions[extensionIndex].length
         val baseLength = path.length - extensionLength

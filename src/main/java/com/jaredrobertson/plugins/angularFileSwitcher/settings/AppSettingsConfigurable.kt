@@ -35,6 +35,7 @@ class AppSettingsConfigurable : Configurable {
             modified or (mySettingsComponent!!.testFileExtensionsText != settings.testFileExtensions)
         modified = modified or (mySettingsComponent!!.switcherGrouping !== settings.grouping)
         modified = modified or (mySettingsComponent!!.closeBehavior !== settings.closeBehavior)
+        
         return modified
     }
 
