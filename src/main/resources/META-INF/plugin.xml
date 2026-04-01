@@ -22,9 +22,40 @@
                 id="angular.QuickSwitch"
                 class="com.jaredrobertson.plugins.angularFileSwitcher.FileSwitchAction"
                 text="Open Next Similarly Named File"
-                description="Switch between corresponding Angular class, component, and style files"
-        >
+                description="Switch between corresponding Angular class, component, and style files">
             <keyboard-shortcut first-keystroke="alt S" keymap="$default"/>
+        </action>
+        
+        <action
+                id="angular.SwitchToTypeScript"
+                class="com.jaredrobertson.plugins.angularFileSwitcher.TsFileSwitchAction"
+                text="Open TypeScript File"
+                description="Switch to the TypeScript file of the Angular component">
+            <keyboard-shortcut first-keystroke="alt T" keymap="$default"/>
+        </action>
+        
+        <action
+                id="angular.SwitchToHtml"
+                class="com.jaredrobertson.plugins.angularFileSwitcher.HtmlFileSwitchAction"
+                text="Open HTML Template File"
+                description="Switch to the HTML template file of the Angular component">
+            <keyboard-shortcut first-keystroke="alt H" keymap="$default"/>
+        </action>
+        
+        <action
+                id="angular.SwitchToStyle"
+                class="com.jaredrobertson.plugins.angularFileSwitcher.CssFileSwitchAction"
+                text="Open CSS/Style File"
+                description="Switch to the CSS/Style file of the Angular component">
+            <keyboard-shortcut first-keystroke="alt C" keymap="$default"/>
+        </action>
+        
+        <action
+                id="angular.SwitchToTest"
+                class="com.jaredrobertson.plugins.angularFileSwitcher.TestFileSwitchAction"
+                text="Open Test File"
+                description="Switch to the Test file of the Angular component">
+            <keyboard-shortcut first-keystroke="alt P" keymap="$default"/>
         </action>
     </actions>
 
