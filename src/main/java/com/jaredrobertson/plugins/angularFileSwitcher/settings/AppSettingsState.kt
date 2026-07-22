@@ -36,6 +36,7 @@ class AppSettingsState : PersistentStateComponent<AppSettingsState?> {
 
     @JvmField
     var closeBehavior = DEFAULT_CLOSE_BEHAVIOR
+    
     override fun getState(): AppSettingsState {
         return this
     }
